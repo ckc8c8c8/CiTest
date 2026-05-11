@@ -6,7 +6,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      Sln: CITest0511.sln
+      Sln: CITest.sln
       Configuration: Release
 
     steps:
