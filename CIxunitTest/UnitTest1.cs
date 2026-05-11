@@ -14,7 +14,7 @@ namespace CIxunitTest
             // Act
             int result = calc.Add(2, 3);
 
-            // Assert
+            // Assertd
             Assert.Equal(5, result);
         }
     }
