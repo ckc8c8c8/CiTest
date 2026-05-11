@@ -1,43 +1,39 @@
-ï»¿name: CI
+name: CI
 
 on: [push]
+  # push:
+  #   branches: [ "master" ]  # ³o¸Ì­nª`·N¡A¦pªG§A GitHub ¹w³]¤À¤ä¬O master ´N­n§ï master
+  # pull_request:
+  #   branches: [ "master" ]
+
 jobs:
-  build-and-test:
+  build-and-test: #job¦WºÙ 
     runs-on: windows-latest
+    # runs-on: ubuntu-latest
 
     env:
-      Sln: CITest0511.sln
+      # 1. ³o¸Ì§ï¦¨§Aªº .sln ÀÉ¦W
+      Sln: CITest.sln
+      # 2. ³]©w½sÄ¶¼Ò¦¡¬° Release
       Configuration: Release
+      
 
     steps:
+    - name: ¨BÆJ 1 - ¤U¸üµ{¦¡½X¨ì°õ¦æÀô¹Ò
+      uses: actions/checkout@v6
 
-      # â‘  Checkout åŸå§‹ç¢¼
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: ¨BÆJ 2 - ¦w¸Ë .NET 8.0 SDK
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 8.0.x
+        # cache: true
+        # cache-dependency-path: ${{ env.Solution_Name }}
 
-      # â‘¡ å®‰è£ .NET SDKï¼ˆä¾å°ˆæ¡ˆç‰ˆæœ¬èª¿æ•´ï¼‰
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
+    - name: ¨BÆJ 3 - ÁÙ­ì¨Ì¿à (Restore)
+      run: dotnet restore ${{ env.Sln }}
 
-      # â‘¢ å¿«å– NuGet å¥—ä»¶ï¼ˆåŠ é€Ÿå¾ŒçºŒåŸ·è¡Œï¼‰
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+    - name: ¨BÆJ 4 - ½sÄ¶±M®× (Build)
+      run: dotnet build ${{ env.Sln }} --configuration ${{ env.Configuration }} --no-restore
 
-      # â‘£ é‚„åŸ NuGet ç›¸ä¾å¥—ä»¶
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.Sln }}
-
-      # â‘¤ å»ºç½®ï¼ˆBuildï¼‰
-      - name: Build
-        run: dotnet build ${{ env.Sln }} --configuration ${{ env.Configuration }} --no-restore
-
-      # â‘¥ åŸ·è¡Œæ¸¬è©¦
-      - name: Test
-        run: dotnet test ${{ env.Sln }} --configuration ${{ env.Configuration }} --no-build --verbosity normal
+    - name: ¨BÆJ 5 - °õ¦æ³æ¤¸´ú¸Õ (Test)
+      run: dotnet test ${{ env.Sln }} --configuration ${{ env.Configuration }} --no-build --verbosity normal
