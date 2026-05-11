@@ -8,8 +8,14 @@ namespace CIxunitTest
         [Fact]
         public void Test_Add()
         {
+            // Arrange
             var calc = new Class1();
-            Assert.Equal();
+
+            // Act
+            int result = calc.Add(2, 3);
+
+            // Assert
+            Assert.Equal(5, result);
         }
     }
 }
