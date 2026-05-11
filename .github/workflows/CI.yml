@@ -18,7 +18,7 @@ jobs:
       
 
     steps:
-    - name: 步驟 1 - 下載程式碼到執行環境上
+    - name: 步驟 1 - 下載程式碼到執行環境
       uses: actions/checkout@v4
 
     - name: 步驟 2 - 安裝 .NET 8.0 SDK
