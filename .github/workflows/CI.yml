@@ -1,0 +1,43 @@
+﻿name: CI
+
+on: [push]
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    env:
+      Sln: CITest0511.sln
+      Configuration: Release
+
+    steps:
+
+      # ① Checkout 原始碼
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ② 安裝 .NET SDK（依專案版本調整）
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      # ③ 快取 NuGet 套件（加速後續執行）
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      # ④ 還原 NuGet 相依套件
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.Sln }}
+
+      # ⑤ 建置（Build）
+      - name: Build
+        run: dotnet build ${{ env.Sln }} --configuration ${{ env.Configuration }} --no-restore
+
+      # ⑥ 執行測試
+      - name: Test
+        run: dotnet test ${{ env.Sln }} --configuration ${{ env.Configuration }} --no-build --verbosity normal
